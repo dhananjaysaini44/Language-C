@@ -2,17 +2,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-struct node
+typedef struct node
 {
     int data;
     struct node *next;
-};
+} Node;
 
-struct node *head, *tail;
+Node *head, *tail;
 
 void newNode(int val)
 {
-    struct node *p = (struct node *)malloc(sizeof(struct node));
+    Node *p = (Node *)malloc(sizeof(Node));
     p->data = val;
     p->next = NULL;
 
@@ -32,7 +32,7 @@ void newNode(int val)
 
 void insertatfront(int val1)
 {
-    struct node *p = (struct node *)malloc(sizeof(struct node));
+    Node *p = (Node *)malloc(sizeof(Node));
     p->data = val1;
     p->next = head;
     tail->next = p;
@@ -41,9 +41,9 @@ void insertatfront(int val1)
 
 void insertatmid(int val1, int loc)
 {
-    struct node *p = (struct node *)malloc(sizeof(struct node));
+    Node *p = (Node *)malloc(sizeof(Node));
     p->data = val1;
-    struct node *q = head;
+    Node *q = head;
     for (int i = 1; i <= loc - 2; i++)
     {
         q = q->next;
@@ -54,7 +54,7 @@ void insertatmid(int val1, int loc)
 
 void insertatend(int val1)
 {
-    struct node *p = (struct node *)malloc(sizeof(struct node));
+    Node *p = (Node *)malloc(sizeof(Node));
     p->data = val1;
     tail->next = p;
     tail = p;
@@ -70,14 +70,16 @@ int deletebydata(int val1)
         exit(1);
     }
 
-    struct node *q, *r;
+    Node *q = head, *r;
     if (head->data == val1)
     {
         if (head == tail)
         {
+            item = head->data;
             free(head);
             head = NULL;
             tail = NULL;
+            return item;
         }
         else
         {
@@ -121,19 +123,29 @@ int deletebydata(int val1)
 int deletefromfront()
 {
     int item;
-    struct node *q = head;
-    tail->next = head->next;
-    item = head->data;
-    head = head->next;
-    free(q);
+    if (head == tail)
+    {
+        item = head->data;
+        free(head);
+        head = NULL;
+        tail = NULL;
+    }
+    else
+    {
+        Node *q = head;
+        tail->next = head->next;
+        item = head->data;
+        head = head->next;
+        free(q);
+    }
     return item;
 }
 
 int deletefrommid(int loc)
 {
     int item;
-    struct node *q = head;
-    struct node *r;
+    Node *q = head;
+    Node *r;
     for (int i = 1; i <= loc - 2; i++)
     {
         q = q->next;
@@ -148,7 +160,7 @@ int deletefrommid(int loc)
 int deletefromend()
 {
     int item;
-    struct node *q = head;
+    Node *q = head;
     while (q->next->next != head)
     {
         q = q->next;
@@ -157,12 +169,13 @@ int deletefromend()
     q->next = head;
     free(tail);
     tail = q;
+    tail->next = head;
     return item;
 }
 
 void print()
 {
-    struct node *p;
+    Node *p;
     p = head;
 
     if (p == NULL)
@@ -293,7 +306,7 @@ int main()
                 case 3:
                     item = deletefromend();
                     count--;
-                    printf("Item deleted from the list: %d", item);
+                    printf("Item deleted from the list: %d\n", item);
                     print();
                     break;
                 default:
