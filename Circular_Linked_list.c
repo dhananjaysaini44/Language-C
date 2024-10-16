@@ -13,52 +13,63 @@ Node *head, *tail;
 void newNode(int val)
 {
     Node *p = (Node *)malloc(sizeof(Node));
-    p->data = val;
-    p->next = NULL;
 
-    if (head == NULL)
+    if (p == NULL)
     {
-        head = p;
-        tail = p;
-        tail->next = head;
+        printf("Memory allocation falied.\n");
+        exit(1);
     }
     else
     {
-        tail->next = p;
-        tail = p;
-        tail->next = head;
+        p->data = val;
+        p->next = NULL;
+
+        if (head == NULL)
+        {
+            head = p;
+            tail = p;
+            tail->next = head;
+        }
+        else
+        {
+            tail->next = p;
+            tail = p;
+            tail->next = head;
+        }
     }
 }
 
-void insertatfront(int val1)
+void insert(int val1, int loc)
 {
-    Node *p = (Node *)malloc(sizeof(Node));
-    p->data = val1;
-    p->next = head;
-    tail->next = p;
-    head = p;
-}
-
-void insertatmid(int val1, int loc)
-{
-    Node *p = (Node *)malloc(sizeof(Node));
-    p->data = val1;
-    Node *q = head;
-    for (int i = 1; i <= loc - 2; i++)
+    if (loc == 1)
     {
-        q = q->next;
+        Node *p = (Node *)malloc(sizeof(Node));
+        p->data = val1;
+        p->next = head;
+        tail->next = p;
+        head = p;
     }
-    p->next = q->next;
-    q->next = p;
-}
-
-void insertatend(int val1)
-{
-    Node *p = (Node *)malloc(sizeof(Node));
-    p->data = val1;
-    tail->next = p;
-    tail = p;
-    tail->next = head;
+    else
+    {
+        Node *p = (Node *)malloc(sizeof(Node));
+        p->data = val1;
+        Node *q = head;
+        for (int i = 1; i <= loc - 2; i++)
+        {
+            q = q->next;
+        }
+        if (q == tail)
+        {
+            q->next = p;
+            tail = p;
+            tail->next = head;
+        }
+        else
+        {
+            p->next = q->next;
+            q->next = p;
+        }
+    }
 }
 
 int deletebydata(int val1)
@@ -120,57 +131,43 @@ int deletebydata(int val1)
     return item;
 }
 
-int deletefromfront()
-{
-    int item;
-    if (head == tail)
-    {
-        item = head->data;
-        free(head);
-        head = NULL;
-        tail = NULL;
-    }
-    else
-    {
-        Node *q = head;
-        tail->next = head->next;
-        item = head->data;
-        head = head->next;
-        free(q);
-    }
-    return item;
-}
-
-int deletefrommid(int loc)
+int deletebylocation(int loc)
 {
     int item;
     Node *q = head;
     Node *r;
-    for (int i = 1; i <= loc - 2; i++)
-    {
-        q = q->next;
-    }
-    r = q->next;
-    item = r->data;
-    q->next = r->next;
-    free(r);
-    return item;
-}
 
-int deletefromend()
-{
-    int item;
-    Node *q = head;
-    while (q->next->next != head)
+    if (loc == 1)
     {
-        q = q->next;
+        if (head == tail)
+        {
+            item = head->data;
+            free(head);
+            head = NULL;
+            tail = NULL;
+        }
+        else
+        {
+            Node *q = head;
+            tail->next = head->next;
+            item = head->data;
+            head = head->next;
+            free(q);
+        }
+        return item;
     }
-    item = tail->data;
-    q->next = head;
-    free(tail);
-    tail = q;
-    tail->next = head;
-    return item;
+    else
+    {
+        for (int i = 1; i <= loc - 2; i++)
+        {
+            q = q->next;
+        }
+        r = q->next;
+        item = r->data;
+        q->next = r->next;
+        free(r);
+        return item;
+    }
 }
 
 void print()
@@ -221,47 +218,23 @@ int main()
         printf("1. Insert\n2. Delete\nEnter the operation to be performed: ");
         int n;
         scanf("%d", &n);
-        int val1, n1, loc, n2, item;
+        int val1, n1, loc, item;
         switch (n)
         {
         case 1:
-            printf("1. At Front\n2. At mid\n3. At End\nEnter the sub-operation to be performed: ");
-            scanf("%d", &n1);
-            switch (n1)
+            printf("Enter data in new node: ");
+            scanf("%d", &val1);
+            printf("Enter the location at which element has to be inserted: ");
+            scanf("%d", &loc);
+            if (loc > count + 1)
             {
-            case 1:
-                printf("Enter data in new node: ");
-                scanf("%d", &val1);
-                insertatfront(val1);
+                printf("INVALID Location!\n");
+            }
+            else
+            {
+                insert(val1, loc);
                 count++;
                 print();
-                break;
-            case 2:
-                printf("Enter data in new node: ");
-                scanf("%d", &val1);
-                printf("Enter the location at which element has to be inserted: ");
-                scanf("%d", &loc);
-                if (loc > count)
-                {
-                    printf("INVALID INPUT\n");
-                }
-                else
-                {
-                    insertatmid(val1, loc);
-                    count++;
-                }
-                print();
-                break;
-            case 3:
-                printf("Enter data in new node: ");
-                scanf("%d", &val1);
-                insertatend(val1);
-                count++;
-                print();
-                break;
-            default:
-                printf("INVALID INPUT\n");
-                break;
             }
             break;
         case 2:
@@ -278,50 +251,24 @@ int main()
                 print();
                 break;
             case 2:
-                printf("1. From Front\n2. From Mid\n3. From End\nEnter the sub-operation to be performed: ");
-                scanf("%d", &n2);
-                switch (n2)
+                printf("Enter the location of the node to be deleted: ");
+                scanf("%d", &loc);
+                if (loc > count)
                 {
-                case 1:
-                    item = deletefromfront();
+                    printf("INVALID Location!\n");
+                }
+                else
+                {
+                    item = deletebylocation(loc);
                     count--;
                     printf("Item deleted from the list: %d\n", item);
                     print();
-                    break;
-                case 2:
-                    printf("Enter the location of the node to be deleted: ");
-                    scanf("%d", &loc);
-                    if (loc < count)
-                    {
-                        item = deletefrommid(loc);
-                        count--;
-                        printf("Item deleted from the list: %d\n", item);
-                    }
-                    else
-                    {
-                        printf("INVALID INPUT\n");
-                    }
-                    print();
-                    break;
-                case 3:
-                    item = deletefromend();
-                    count--;
-                    printf("Item deleted from the list: %d\n", item);
-                    print();
-                    break;
-                default:
-                    printf("INVALID INPUT\n");
-                    break;
                 }
                 break;
             default:
-                printf("INVALID INPUT\n");
+                printf("INVALID INPUT!\n");
                 break;
             }
-            break;
-        default:
-            printf("INVALID INPUT\n");
-            break;
         }
     }
     return 0;
