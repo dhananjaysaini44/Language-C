@@ -109,6 +109,35 @@ int commonNode(Node *r, int count)
     return item;
 }
 
+int commonNode1(Node *r, Node *s)
+{
+    int item = -1;
+    if (head1 == NULL || head2 == NULL)
+    {
+        printf("INVALID Operation.\n");
+        exit(1);
+    }
+    else
+    {
+        Node *p = r, *q = s;
+        while (p != NULL)
+        {
+            q = s;
+            while(q != NULL)
+            {
+                if (p->next == q->next)
+                {
+                    item = q->data;
+                    break;
+                }
+                q = q->next;
+            }
+            p = p->next;
+        }
+    }
+    return item;
+}
+
 void connect(Node *r, Node *s, int loc)
 {
     if (r == NULL || s == NULL || loc <= 0)
@@ -192,7 +221,7 @@ int main()
         print(head1);
         print(head2);
 
-        item = commonNode(head2, count2);
+        item = commonNode1(head1, head2);
         printf("The common item is: %d", item);
         break;
     default:
