@@ -1,5 +1,8 @@
 # 💫 About Me:
-I'm currently learning Kotlin as I'm interested in App Dev and also practicing DSA on CodeChef.
+C | C++ | Python | Flutter | Dart | Kotlin | Html | CSS
+
+
+(https://www.codechef.com/users/dhananjay_44)
 
 
 ## 🌐 Socials:
