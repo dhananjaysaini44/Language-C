@@ -42,6 +42,11 @@ void newNode(int val)
 void insert(int val1, int loc)
 {
     Node *p = (Node *)malloc(sizeof(Node));
+    if (p == NULL)
+    {
+        printf("Memory allocation failed.\n");
+        exit(1);
+    }
     p->data = val1;
 
     if (loc == 1)
@@ -56,8 +61,16 @@ void insert(int val1, int loc)
         {
             q = q->next;
         }
-        p->next = q->next;
-        q->next = p;
+        if (q != NULL)
+        {
+            p->next = q->next;
+            q->next = p;
+        }
+        else
+        {
+            printf("Location out of range.\n");
+            free(p);
+        }
     }
 }
 
@@ -66,7 +79,7 @@ int deletebydata(int val1)
     if (head == NULL)
     {
         printf("List is empty!\n");
-        exit(1);
+        return -1;
     }
 
     Node *q = head, *r = NULL;
@@ -84,6 +97,13 @@ int deletebydata(int val1)
         r = q;
         q = q->next;
     }
+
+    if (q == NULL)
+    {
+        printf("Item not found.\n");
+        return -1;
+    }
+
     int item = q->data;
     r->next = q->next;
     free(q);
@@ -95,8 +115,9 @@ int deletebylocation(int loc)
     if (head == NULL)
     {
         printf("List is empty!\n");
-        exit(1);
+        return -1;
     }
+
     if (loc == 1)
     {
         Node *q = head;
@@ -112,6 +133,13 @@ int deletebylocation(int loc)
         {
             q = q->next;
         }
+
+        if (q == NULL || q->next == NULL)
+        {
+            printf("Location out of range.\n");
+            return -1;
+        }
+
         r = q->next;
         int item = r->data;
         q->next = r->next;
@@ -126,7 +154,7 @@ void print()
 
     if (p == NULL)
     {
-        printf("No DATA Found\n");
+        printf("No DATA Found!\n");
         return;
     }
 
@@ -156,15 +184,14 @@ int main()
 
     print();
 
-    int t;
-    printf("Enter the number of test cases: ");
-    scanf("%d", &t);
-    while (t--)
+    int operation = 0;
+    do
     {
-        printf("1. Insert\n2. Delete\nEnter the operation to be performed: ");
-        int operation;
+        printf("\n1. Insert\n2. Delete\n3. Exit\nEnter the operation to be performed: ");
         scanf("%d", &operation);
+
         int val1, loc, item;
+
         switch (operation)
         {
         case 1:
@@ -172,7 +199,7 @@ int main()
             scanf("%d", &val1);
             printf("Enter the location at which element has to be inserted: ");
             scanf("%d", &loc);
-            if (loc > count + 1)
+            if (loc > count + 1 || loc < 1)
             {
                 printf("INVALID Location!\n");
             }
@@ -183,44 +210,61 @@ int main()
                 print();
             }
             break;
+
         case 2:
             printf("1. Delete by data\n2. Delete by location\nEnter the sub-operation to be performed: ");
             int delop;
             scanf("%d", &delop);
+
             switch (delop)
             {
             case 1:
                 printf("Enter the data to be deleted: ");
                 scanf("%d", &val1);
                 item = deletebydata(val1);
-                count--;
-                printf("Item deleted from the list: %d\n", item);
-                print();
+                if (item != -1)
+                {
+                    count--;
+                    printf("Item deleted from the list: %d\n", item);
+                    print();
+                }
                 break;
+
             case 2:
                 printf("Enter the location of the node to be deleted: ");
                 scanf("%d", &loc);
-                if (loc > count)
+                if (loc > count || loc < 1)
                 {
                     printf("INVALID Location!\n");
                 }
                 else
                 {
                     item = deletebylocation(loc);
-                    printf("Item deleted from the list: %d\n", item);
-                    count--;
-                    print();
+                    if (item != -1)
+                    {
+                        count--;
+                        printf("Item deleted from the list: %d\n", item);
+                        print();
+                    }
                 }
                 break;
+
             default:
-                printf("INVALID INPUT\n");
+                printf("INVALID Input\n");
                 break;
             }
             break;
+
+        case 3:
+            printf("Exiting...\n");
+            break;
+
         default:
-            printf("INVALID INPUT\n");
+            printf("INVALID Input\n");
             break;
         }
-    }
+
+    } while (operation != 3);
+
     return 0;
 }
