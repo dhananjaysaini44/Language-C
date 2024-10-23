@@ -48,7 +48,8 @@ void insert(int val1, int loc)
     if (loc == 1)
     {
         p->next = head;
-        head->prev = p;
+        if (head != NULL)
+            head->prev = p;
         p->prev = NULL;
         head = p;
     }
@@ -58,6 +59,12 @@ void insert(int val1, int loc)
         for (int i = 1; i < loc - 1 && q != NULL; i++)
         {
             q = q->next;
+        }
+        if (q == NULL)
+        {
+            printf("INVALID Location!\n");
+            free(p);
+            return;
         }
         if (q->next == NULL)
         {
@@ -81,7 +88,7 @@ int deletebydata(int val1)
     if (head == NULL)
     {
         printf("List is empty!\n");
-        exit(1);
+        return -1;
     }
 
     Node *q = head, *r, *s;
@@ -89,8 +96,10 @@ int deletebydata(int val1)
     if (head->data == val1)
     {
         int item = head->data;
+        q = head;
         head = head->next;
-        head->prev = NULL;
+        if (head != NULL)
+            head->prev = NULL;
         free(q);
         return item;
     }
@@ -101,10 +110,22 @@ int deletebydata(int val1)
             r = q;
             q = q->next;
         }
+
+        if (q == NULL)
+        {
+            printf("Item not found!\n");
+            return -1;
+        }
+
         int item = q->data;
         s = q->next;
-        r->next = s;
-        s->prev = r;
+
+        if (s != NULL)
+            s->prev = r;
+
+        if (r != NULL)
+            r->next = s;
+
         free(q);
         return item;
     }
@@ -115,7 +136,7 @@ int deletebylocation(int loc)
     if (head == NULL)
     {
         printf("List is empty!\n");
-        exit(1);
+        return -1;
     }
 
     if (loc == 1)
@@ -123,36 +144,36 @@ int deletebylocation(int loc)
         Node *q = head;
         int item = head->data;
         head = head->next;
-        head->prev = NULL;
+        if (head != NULL)
+            head->prev = NULL;
         free(q);
         return item;
     }
     else
     {
         Node *q = head, *r = NULL, *s;
-        for (int i = 1; i <= loc - 1 && q->next != NULL; i++)
+        for (int i = 1; i < loc && q != NULL; i++)
         {
             r = q;
             q = q->next;
         }
-        if (q->next == NULL)
+        if (q == NULL)
         {
-            r = q;
-            int item = q->data;
-            q = q->prev;
-            free(r);
-            q->next = NULL;
-            return item;
+            printf("INVALID Location!\n");
+            return -1;
         }
-        else
-        {
-            int item = q->data;
-            s = q->next;
-            r->next = s;
+
+        int item = q->data;
+        s = q->next;
+
+        if (s != NULL)
             s->prev = r;
-            free(q);
-            return item;
-        }
+
+        if (r != NULL)
+            r->next = s;
+
+        free(q);
+        return item;
     }
 }
 
@@ -161,7 +182,6 @@ void printforward(Node *r)
     if (r == NULL)
     {
         printf("No DATA found!\n");
-        exit(1);
     }
     else
     {
@@ -175,12 +195,11 @@ void printforward(Node *r)
     }
 }
 
-void printbackword(Node *r)
+void printbackward(Node *r)
 {
     if (r == NULL)
     {
         printf("No DATA found\n");
-        exit(1);
     }
     else
     {
@@ -217,15 +236,12 @@ int main()
     printforward(head);
 
     printf("The list printed backward is: ");
-    printbackword(head);
+    printbackward(head);
 
-    int t;
-    printf("Enter the number of test cases: ");
-    scanf("%d", &t);
-    while (t--)
+    int operation = 0;
+    do
     {
-        printf("1. Insert\n2. Delete\nEnter the operation to be performed: ");
-        int operation;
+        printf("1. Insert\n2. Delete\n3. Exit\nEnter the operation to be performed: ");
         scanf("%d", &operation);
         int val1, loc, item;
         switch (operation)
@@ -235,7 +251,7 @@ int main()
             scanf("%d", &val1);
             printf("Enter the location at which element has to be inserted: ");
             scanf("%d", &loc);
-            if (loc > count + 1)
+            if (loc > count + 1 || loc <= 0)
             {
                 printf("INVALID Location!\n");
             }
@@ -246,7 +262,7 @@ int main()
                 count++;
                 printforward(head);
                 printf("The list printed backward is: ");
-                printbackword(head);
+                printbackward(head);
             }
             break;
         case 2:
@@ -259,32 +275,35 @@ int main()
                 printf("Enter the data to be deleted: ");
                 scanf("%d", &val1);
                 item = deletebydata(val1);
-                count--;
-                printf("Item deleted from the list: %d\n", item);
-
-                printf("The list printed forward is: ");
-                printforward(head);
-
-                printf("The list printed backward is: ");
-                printbackword(head);
+                if (item != -1)
+                {
+                    count--;
+                    printf("Item deleted from the list: %d\n", item);
+                    printf("The list printed forward is: ");
+                    printforward(head);
+                    printf("The list printed backward is: ");
+                    printbackward(head);
+                }
                 break;
             case 2:
                 printf("Enter the location of the node to be deleted: ");
                 scanf("%d", &loc);
-                if (loc > count)
+                if (loc > count || loc <= 0)
                 {
                     printf("INVALID Location!\n");
                 }
                 else
                 {
                     item = deletebylocation(loc);
-                    printf("Item deleted from the list: %d\n", item);
-                    count--;
-                    printf("The list printed forward is: ");
-                    printforward(head);
-
-                    printf("The list printed backward is: ");
-                    printbackword(head);
+                    if (item != -1)
+                    {
+                        printf("Item deleted from the list: %d\n", item);
+                        count--;
+                        printf("The list printed forward is: ");
+                        printforward(head);
+                        printf("The list printed backward is: ");
+                        printbackward(head);
+                    }
                 }
                 break;
             default:
@@ -292,11 +311,14 @@ int main()
                 break;
             }
             break;
+        case 3:
+            printf("Exiting...\n");
+            break;
         default:
             printf("INVALID INPUT\n");
             break;
         }
-    }
+    } while (operation != 3);
 
     return 0;
 }
