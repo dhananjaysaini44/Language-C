@@ -55,7 +55,7 @@ int main()
     int ch, val;
     do
     {
-        printf("S1. PUSH\n2. POP\n3. PEEK\n4. EXIT\nEnter the opertation to be performed: ");
+        printf("1. PUSH\n2. POP\n3. PEEK\n4. EXIT\nEnter the opertation to be performed: ");
         scanf("%d", &ch);
         switch (ch)
         {
@@ -66,7 +66,7 @@ int main()
             break;
         case 2:
             val = pop();
-            printf("Item popped from the stack is: %d", val);
+            printf("Item popped from the stack is: %d\n", val);
             break;
         case 3:
             if (top == NULL)
