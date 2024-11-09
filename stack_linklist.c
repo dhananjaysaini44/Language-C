@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#define MAX 10
 
 typedef struct stack
 {
@@ -11,6 +12,11 @@ stack *top = NULL;
 
 void push(int val)
 {
+    if (top == MAX)
+    {
+        printf("Stack is full!\n");
+        exit(1);
+    }
     stack *p = (stack *)malloc(sizeof(stack));
     if (p == NULL)
     {
